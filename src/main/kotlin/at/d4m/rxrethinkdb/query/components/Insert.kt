@@ -8,10 +8,10 @@ import com.rethinkdb.gen.ast.Table
 /**
  * @author Christoph Muck
  */
-data class Get internal constructor(private val value: Any) : StartingQueryComponent {
+data class Insert internal constructor(private val value: Map<String, Any>) : StartingQueryComponent {
     override fun applyTo(expr: Table): ReqlExpr {
-        return expr.get(value)
+        return expr.insert(value)
     }
 }
 
-fun Query.Companion.get(value: Any): Query<Table> = this.createQuery(Get(value))
+fun Query.Companion.insert(value: Map<String, Any>): Query<Table> = createQuery(Insert(value))

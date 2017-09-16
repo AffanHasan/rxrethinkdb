@@ -4,10 +4,10 @@ import at.d4m.rxrethinkdb.query.Query
 import at.d4m.rxrethinkdb.query.QueryComponent
 import com.rethinkdb.gen.ast.ReqlExpr
 
-class Changes internal constructor() : QueryComponent {
+class Delete internal constructor() : QueryComponent {
 
     override fun applyTo(expr: ReqlExpr): ReqlExpr {
-        return expr.changes()
+        return expr.delete()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -21,5 +21,5 @@ class Changes internal constructor() : QueryComponent {
     }
 }
 
-fun <T : ReqlExpr> Query<T>.changes(): Query<T> = addComponent(Changes())
-fun <T : ReqlExpr> Query.Companion.changes(): Query<T> = createQuery(Changes())
+fun <T : ReqlExpr> Query<T>.delete(): Query<T> = addComponent(Delete())
+fun <T : ReqlExpr> Query.Companion.delete(): Query<T> = createQuery(Delete())

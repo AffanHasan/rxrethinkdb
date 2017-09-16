@@ -36,6 +36,26 @@ internal open class DefaultQuery<in T : ReqlExpr> constructor(
         }
         return exp
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DefaultQuery<*>
+
+        if (start != other.start) return false
+        if (rest != other.rest) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = start?.hashCode() ?: 0
+        result = 31 * result + rest.hashCode()
+        return result
+    }
+
+
 }
 
 internal class DefaultTableQuery(
@@ -49,6 +69,7 @@ interface Query<in T : ReqlExpr> {
 
     companion object {
         internal fun <T : ReqlExpr> createQuery(component: BasicQueryComponent<T>): Query<T> = DefaultQuery(component)
+        fun <T : ReqlExpr> empty(): Query<T> = DefaultQuery()
     }
 }
 

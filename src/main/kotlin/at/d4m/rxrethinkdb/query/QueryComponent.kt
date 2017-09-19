@@ -54,8 +54,6 @@ internal open class DefaultQuery<in T : ReqlExpr> constructor(
         result = 31 * result + rest.hashCode()
         return result
     }
-
-
 }
 
 internal class DefaultTableQuery(
@@ -75,7 +73,3 @@ interface Query<in T : ReqlExpr> {
 
 
 interface TableQuery : Query<Table>
-
-fun test() {
-//    val get: Query<Table> = Query.get("").changes()
-}

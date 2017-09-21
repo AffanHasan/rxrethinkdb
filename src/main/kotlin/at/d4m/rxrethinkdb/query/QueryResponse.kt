@@ -4,7 +4,6 @@ import com.rethinkdb.gen.exc.ReqlDriverError
 import com.rethinkdb.net.Cursor
 import io.reactivex.Emitter
 import io.reactivex.Flowable
-import io.reactivex.schedulers.Schedulers
 import org.slf4j.LoggerFactory
 
 /**

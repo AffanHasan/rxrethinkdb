@@ -14,7 +14,7 @@ interface StartingQueryComponent : BasicQueryComponent<Table>
 interface QueryComponent : BasicQueryComponent<ReqlExpr>
 
 internal open class DefaultQuery<in T : ReqlExpr> constructor(
-        internal val start: BasicQueryComponent<T>? = null,
+        internal val start: BasicQueryComponent<T>,
         internal val rest: MutableList<QueryComponent> = mutableListOf()
 ) : Query<T> {
 
@@ -28,8 +28,6 @@ internal open class DefaultQuery<in T : ReqlExpr> constructor(
     }
 
     override fun construct(firstElement: T): ReqlExpr {
-        if (start == null) return firstElement
-
         var exp = firstElement.apply(start)
         rest.forEach {
             exp = exp.apply(it)
@@ -50,14 +48,14 @@ internal open class DefaultQuery<in T : ReqlExpr> constructor(
     }
 
     override fun hashCode(): Int {
-        var result = start?.hashCode() ?: 0
+        var result = start.hashCode() ?: 0
         result = 31 * result + rest.hashCode()
         return result
     }
 }
 
 internal class DefaultTableQuery(
-        start: BasicQueryComponent<Table>? = null,
+        start: BasicQueryComponent<Table>,
         rest: MutableList<QueryComponent> = mutableListOf()
 ) : TableQuery, DefaultQuery<Table>(start, rest)
 
@@ -67,9 +65,15 @@ interface Query<in T : ReqlExpr> {
 
     companion object {
         internal fun <T : ReqlExpr> createQuery(component: BasicQueryComponent<T>): Query<T> = DefaultQuery(component)
-        fun <T : ReqlExpr> empty(): Query<T> = DefaultQuery()
+        fun <T : ReqlExpr> empty(): Query<T> = createQuery(empty)
+        private val empty = Empty()
     }
 }
 
-
 interface TableQuery : Query<Table>
+
+internal class Empty : BasicQueryComponent<ReqlExpr> {
+    override fun applyTo(expr: ReqlExpr): ReqlExpr {
+        return expr
+    }
+}

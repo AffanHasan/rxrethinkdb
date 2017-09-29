@@ -48,7 +48,7 @@ internal open class DefaultQuery<in T : ReqlExpr> constructor(
     }
 
     override fun hashCode(): Int {
-        var result = start.hashCode() ?: 0
+        var result = start.hashCode()
         result = 31 * result + rest.hashCode()
         return result
     }

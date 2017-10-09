@@ -7,7 +7,9 @@ import com.rethinkdb.gen.ast.ReqlExpr
 class Changes internal constructor() : QueryComponent {
 
     override fun applyTo(expr: ReqlExpr): ReqlExpr {
-        return expr.changes().optArg("include_initial", true)
+        return expr.changes()
+                .optArg("include_initial", true)
+                .optArg("include_types", true)
     }
 
     override fun equals(other: Any?): Boolean {

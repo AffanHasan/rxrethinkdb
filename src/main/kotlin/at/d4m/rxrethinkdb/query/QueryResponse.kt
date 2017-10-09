@@ -4,6 +4,8 @@ import com.rethinkdb.gen.exc.ReqlDriverError
 import com.rethinkdb.net.Cursor
 import io.reactivex.Emitter
 import io.reactivex.Flowable
+import io.reactivex.Scheduler
+import io.reactivex.schedulers.Schedulers
 import org.slf4j.LoggerFactory
 
 /**
@@ -39,6 +41,9 @@ class DefaultQueryResponse(private val response: Any) : QueryResponse {
     }
 
     override fun responseAsFlowable(): Flowable<Map<String, Any>> {
+        val threadSet = Thread.getAllStackTraces().keys.map { it.name }
+                .filter { it.startsWith("RxCachedThread") }.joinToString(",\n")
+        println("[$threadSet]")
         val generator = { cursor: Cursor<Map<String, Any>>, emitter: Emitter<Map<String, Any>> ->
             println("Emitter ${Thread.currentThread().name}")
             try {

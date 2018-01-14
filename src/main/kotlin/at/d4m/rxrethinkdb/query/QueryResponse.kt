@@ -41,11 +41,15 @@ class DefaultQueryResponse(private val response: Any) : QueryResponse {
     }
 
     override fun responseAsFlowable(): Flowable<Map<String, Any>> {
-        val threadSet = Thread.getAllStackTraces().keys.map { it.name }
-                .filter { it.startsWith("RxCachedThread") }.joinToString(",\n")
-        println("[$threadSet]")
+        if (LOG.isDebugEnabled) {
+            val threadSet = Thread.getAllStackTraces().keys
+                    .map { it.name }
+                    .filter { it.startsWith("RxCachedThread") }
+                    .joinToString(",\n")
+            LOG.debug("{}", threadSet)
+        }
+
         val generator = { cursor: Cursor<Map<String, Any>>, emitter: Emitter<Map<String, Any>> ->
-            println("Emitter ${Thread.currentThread().name}")
             try {
                 if (cursor.hasNext()) {
                     emitter.onNext(cursor.next())
@@ -62,6 +66,9 @@ class DefaultQueryResponse(private val response: Any) : QueryResponse {
                 emitter.onError(e)
             }
         }
-        return Flowable.generate({ responseAsCursor() }, generator)
+        return Flowable.generate({
+            LOG.debug("Emitter {}", Thread.currentThread().name)
+            responseAsCursor()
+        }, generator).subscribeOn(Schedulers.io()).observeOn(Schedulers.computation())
     }
 }
